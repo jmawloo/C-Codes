@@ -1,0 +1,10 @@
+*.exe
+*.obj
+
+#Visual Studio Extensions
+*.pdb
+.vs/
+*.ilk
+
+#Specific Project Files
+
