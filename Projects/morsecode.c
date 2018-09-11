@@ -58,7 +58,7 @@ void morseBeep(char **encoded, int count) {
 }
 
 int main(void) {
-	//TODO: main(int String, char *args[]) 
+	//TODO: main(int String, char *args[]), e.g. to change morse speed or have display options.
 	char sentence[500]; //Assume longest sentence ever is 500 characters long (__future__: change this?)
 	puts("Enter your sentence to be translated into morse code:");
 	fgets(sentence, 500, stdin);
