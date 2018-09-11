@@ -52,7 +52,7 @@ void selectionsort(double* l, int size) {
 	puts("Function selectionsort executed"); //DEBUG
 }
 
-void insertionsort(double* l, int rightmargin, int leftmargin) {//leftmargin used in mergesort.
+void insertionsort(double* l, int leftmargin, int rightmargin) {//leftmargin used in mergesort.
 	unsigned int x, y, increment, z;
 	char check1, check2, trigger;
 	double temp, temp2; 
@@ -120,48 +120,32 @@ void insertionsort(double* l, int rightmargin, int leftmargin) {//leftmargin use
 }
 
 void insertionsortdefault(double* l, int size) {//Provides default value for leftmargin, declared after original insertionsort function. 
-	insertionsort(l, size, 1);
+	insertionsort(l, 1, size);
 	puts("Function insertionsort executed"); //DEBUG
 }
-
-//__Future__: DONT create new arrays all the time. U only need 2. Save some memory.
-void mergesort(double *l, int size) {
+//TODO: Do everything WITHOUT insertionsort.
+void mergesort(double *l, int leftmargin, int rightmargin) { //DEFAULT: Leftmargin = 0, rightmargin = END index, not including index itself. 
     /*First part is to divide. 2nd part is to conquer. Uses recursion
 	This function also uses insertionsort to merge the arrays together.
 	*/
-	int size2 = size / 2, i; // Size2 describes the size of the 1st subarray.
-	double *arr1, *arr2; // Sub-arrays to sort.
+	
+	//Index used for reference is [leftmargin, rightmargin) in interval notation.
+	int size = (rightmargin - leftmargin) / 2; //Get half the array size, truncated towards 0.
 	
 	//Part 1: Divide. Split arrays into subarrays and pass them recursively back into the function for them to get sorted.
-	//Dynamically allocate memory for subarrays.
-	arr1 = (double*) calloc(size2, sizeof(double));
-	arr2 = (double*) calloc(size-size2, sizeof(double)); // Arr2 handles arrays with odd number of elements.
-		
-	for (i = 0; i < size2; i++) {// Store values in 1st array.
-		arr1[i] = l[i]; 
-	}
-	(size2 > 1)? mergesort(arr1, size2): 0; // Modify the 1st sub-array so it's in sort-order if half the master array size is still larger than 1.
-		
-	for (i = size2; i < size; i++) {// Store values in 2nd array.
-		arr2[i-size2] = l[i];
-	}	
-	(size2 > 1)? mergesort(arr2, size-size2): 0;// Modify the 2nd sub-array so it's in sort-order
+	(size > 1)? mergesort(l, leftmargin, rightmargin - size): 0; // Left part of array identified by changing only rightmargin value.
+	(size > 1)? mergesort(l, leftmargin + size, rightmargin): 0;// Right part identified by only changing leftmargin value.
 
-
+    // Once the very 1st occurence of a size 1 array reached, function begins "combining" arrays by using insertionsort.
 	// Part 2: Conquer. Take sorted 2nd subarray, compare elements to sorted 1st array elements and modify array based on positioning of subarrays. Use binary search for quick indexing.
-	for (i = 0; i < size2; i++) {// Stores elements of sorted 1st subarray into first few elements of master array.
-		l[i] = arr1[i];	
-	}
-	for (i; i < size; i++) {// Now store elements of 2nd subarray into last elements of master array
-		l[i] = arr2[i-size2];
-	}
 	
 	//Pass everything through insertionsort function with size2 as starting margin (leftmargin):
-	insertionsort(l, size, size2);
-	
-	//Cleanup
-	free(arr1);
-	free(arr2);
+	insertionsort(l, leftmargin, rightmargin);
+}
+
+void mergesortdefault(double *l, int size) {
+	mergesort(l, 0, size);
+    puts("Function mergesort executed"); //DEBUG
 }
 
 int main(void) {
@@ -187,17 +171,16 @@ int main(void) {
 
 	switch (choice) {
 		case 'b':
-			bubblesort(list,size);
+			bubblesort(list, size);
 			break;
 		case 's':
-			selectionsort(list,size);
+			selectionsort(list, size);
 			break;
 		case 'i':
-			insertionsortdefault(list,size);
+			insertionsortdefault(list, size);
 			break;
 		case 'm':
-		    mergesort(list,size);
-			puts("Function mergesort executed"); //DEBUG
+		    mergesortdefault(list, size);
 			break;
 		default:
 			puts("invalid value, please run the program again.");
